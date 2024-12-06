@@ -28,13 +28,20 @@ function displayRankingType(rankingType: RankingType): string {
 
 export function resultsSummary(poll: Poll, results: RankingResults): MessageEmbed {
     const footer = `Ranking Type: ${displayRankingType(results.rankingType)}\n`
-    const columns = DEBUG ? ['rank', 'option', 'score'] : ['rank', 'option']
+
+    //The Score just makes the results feel better. I've decided that the "Score" Column should exist, no matter what.
+    const columns = ['rank', 'option', 'score']
     const finalRankings = columnify(results.finalRankings.map(([key, score], i) => ({ option: poll.options[key], rank: i + 1, score })), {
         columns,
         align: 'right',
         columnSplitter: ' | ',
     })
+
+    //My experience is limited, but I believe I created two variables from the "Final Rankings" 0 index and I'm using that to display the matching result from the poll options. If I'm right this makes the score more clear. 
+    //I used references from lines 55 and 63 to reverse engineer this.
+    const [winner, score] = results.finalRankings[0]
     const metrics = (
+        `Winner: ${poll.options[winner]} ${score}\n` +
         `Ballot count: ${results.metrics.voteCount}\n` +
         `Time to compute: ${results.metrics.computeDuration.toFormat('S')}ms\n`
     )
@@ -54,7 +61,7 @@ export function resultsSummary(poll: Poll, results: RankingResults): MessageEmbe
 
     if (closeCalls.length > 0) {
         const closeCallMsg = closeCalls.map(([p, c]) => `- \`${poll.options[p]}\` beat \`${poll.options[c]}\``).join('\n')
-        embed.addField('These were close calls!', closeCallMsg.substring(0, 1024))
+        embed.addField('Informational: These pairings were were close calls!', closeCallMsg.substring(0, 1024))
     }
 
     embed
