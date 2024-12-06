@@ -3,6 +3,9 @@ import { REST } from "@discordjs/rest"
 import { Routes } from "discord-api-types/v9"
 import { DISCORD_CLIENT_ID, DISCORD_TOKEN } from "./settings"
 
+//I'm not entirely sure why these commands are in this code as they are marked as obsolete. 
+//I have commented them out to preven them from being built and showing up in the Discord bot options. 
+/*
 export const pollCommand = new SlashCommandBuilder()
     .setName('poll')
     .setDescription('Poll command')
@@ -31,6 +34,7 @@ export const pollCommand = new SlashCommandBuilder()
             .setName('update')
             .setDescription('[OBSOLETE] Use /poll_update.')
     )
+*/
 
 export const pollCreateCommand = new SlashCommandBuilder()
     .setName('poll_create')
@@ -46,13 +50,16 @@ export const pollCreateCommand = new SlashCommandBuilder()
             .setName('options')
             .setDescription('Comma-separated poll options')
             .setRequired(true)
-    )
+)
+    //At this time Randomized Ballots isn't fully explained, but my understanding is that it will randomize the ballots before calculating the scores. I'm not sure of the benefit of this.
+    //Since it's defaulted to on, I don't plan on touching this until I find more information
     .addBooleanOption(option =>
         option
             .setName('randomized_ballots')
             .setDescription('Enables randomized ballot option ordering if true. (default: True)')
             .setRequired(false)
-    )
+)
+    //This simply ensures that users can view results at any time. More often than not, this is a good thing and I don't see why this would need to be turned off in the terms of a Discord poll. 
     .addBooleanOption(option =>
         option
             .setName('anytime_results')
@@ -69,6 +76,7 @@ export const pollResultsCommand = new SlashCommandBuilder()
             .setDescription('The poll id to view results for')
             .setRequired(true)
     )
+    //This shows you the result in a private message that only the user can see. This is great for not clogging up the feed with people checking on results.
     .addBooleanOption(option =>
         option
             .setName('private')
@@ -76,6 +84,7 @@ export const pollResultsCommand = new SlashCommandBuilder()
             .setRequired(false)
     )
 
+//This command closes the poll before showing the results announding the winner.
 export const pollCloseCommand = new SlashCommandBuilder()
     .setName('poll_close')
     .setDescription('Close a poll')
@@ -85,7 +94,7 @@ export const pollCloseCommand = new SlashCommandBuilder()
             .setDescription('The poll id to close')
             .setRequired(true)
     )
-
+//I need to investigate this further. I'm not sure what the audit looks like. But it should be well documented at some point. 
 export const pollAuditCommand = new SlashCommandBuilder()
     .setName('poll_audit')
     .setDescription('Audit a poll. Only the poll owner, admins, or pollbotAdmins can audit a poll.')
@@ -96,6 +105,7 @@ export const pollAuditCommand = new SlashCommandBuilder()
             .setRequired(true)
     )
 
+//This allows you to make changes to a poll that is already active. The topic, closing time, and the other options
 export const pollUpdateCommand = new SlashCommandBuilder()
     .setName('poll_update')
     .setDescription('Update a poll')
@@ -128,8 +138,9 @@ export const pollUpdateCommand = new SlashCommandBuilder()
             .setRequired(false)
     )
 
+//The command name is really bad, and is hard to find in a server full of bots. I have changed this to include the "poll" prefix that all the other commands have.
 export const deleteMyUserDataCommand = new SlashCommandBuilder()
-    .setName('unsafe_delete_my_user_data')
+    .setName('poll_unsafe_delete_my_user_data')
     .setDescription(`Deletes all of your polls and ballots. This is cannot be reversed.`)
     .addUserOption(option =>
         option
@@ -137,9 +148,11 @@ export const deleteMyUserDataCommand = new SlashCommandBuilder()
             .setDescription('Confirm your account')
             .setRequired(true)
     )
-
+//Going to comment this out as well, since I commented out the other block. If we aren't building the obsolete commands...then there is no reason to go any further in the code with them. Removing them is the best course of action
+/*
 const obsoleteCommands = [
     pollCommand]
+*/
 
 const nonHelpCommands = [
     pollCreateCommand,
@@ -150,6 +163,7 @@ const nonHelpCommands = [
     deleteMyUserDataCommand,
 ]
 
+//displays help information. I'm sure that I'll need to update that help results at some point.
 export const helpCommand = new SlashCommandBuilder()
     .setName('help')
     .setDescription(`View information about pollbot commands`)
@@ -167,14 +181,20 @@ export const helpCommand = new SlashCommandBuilder()
             .setChoices(nonHelpCommands.map(c => [c.name, c.name] as [name: string, value: string]))
     )
 
+
 const okCommands = [
     ...nonHelpCommands,
     helpCommand,
 ]
 
+/*
 const commands = [
     ...obsoleteCommands,
     ...okCommands,
+]
+*/
+const commands = [
+    ...okCommands
 ]
 
 export function matchCommand(commandName: string) {
